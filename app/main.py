@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from contextlib import asynccontextmanager
+from prometheus_fastapi_instrumentator import Instrumentator
 from app.models import TodoCreate, TodoResponse
 from app.database import get_db, create_tables, TodoModel
 
@@ -10,6 +11,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Todo API - Kubernetes", lifespan=lifespan)
+Instrumentator().instrument(app).expose(app)
 
 @app.get("/")
 def root():
